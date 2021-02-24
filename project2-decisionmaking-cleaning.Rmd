@@ -1,0 +1,38 @@
+---
+title: "Untitled"
+author: "Ye Dam Yi"
+date: "2/23/2021"
+output: html_document
+---
+
+```{r library}
+library(tidyverse)
+library(haven)
+
+```
+
+```{r read-data}
+raw_data <- read_spss("data/raw-data-20200618.sav")
+glimpse(raw_data)
+```
+
+```{r select-columns, eval = FALSE}
+# select columns 
+raw_data <- raw_data %>% 
+  select(Duration__in_seconds_, Age, Gender, ends_with("Name"), Q3.3, contains("Page_Submit"), Q260, Q205, ends_with("INT"), ends_with("Int"), ends_with("OBJ"), ends_with("Obj"), ends_with("Decision"), ends_with("Pos"), ends_with("Neg"), OPosOut:SNegFeel, Gloomy, Eggplant, NYC, Code:FL_40_DO_MaleSelfPerspectiveTaking)
+
+# drop two more variables
+raw_data <- raw_data %>% 
+  select(-(RecipientLastName:RecipientFirstName))
+
+# check data
+glimpse(raw_data)
+
+# drop submit info for practice scenarios
+raw_data <- raw_data %>% 
+  select(-contains("Submit") & contains("203" | "204" | "300" | "307" | "4.5" | "4.13" | "334" | "339" | "261" | "263" | "267" | "370" | "372" | "377" | "")   )
+
+
+# give id to data
+tibble::rowid_to_column(raw_data, "ID")
+```
