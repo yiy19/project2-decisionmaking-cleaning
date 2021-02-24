@@ -13,28 +13,47 @@ library(haven)
 
 ```{r read-data}
 raw_data <- read_spss("data/raw-data-20200618.sav")
+# standardize case 
+raw_data <- raw_data %>% 
+rename_with(tolower)
 glimpse(raw_data)
 ```
 
-```{r select-columns, eval = FALSE}
-# select columns 
+```{r select-columns}
+# select columns
 raw_data <- raw_data %>% 
-  select(Duration__in_seconds_, Age, Gender, ends_with("Name"), Q3.3, contains("Page_Submit"), Q260, Q205, ends_with("INT"), ends_with("Int"), ends_with("OBJ"), ends_with("Obj"), ends_with("Decision"), ends_with("Pos"), ends_with("Neg"), OPosOut:SNegFeel, Gloomy, Eggplant, NYC, Code:FL_40_DO_MaleSelfPerspectiveTaking)
+  select(duration__in_seconds_, age, gender, ends_with("name"), contains("page_submit"), ends_with("int"), ends_with("obj"), ends_with("decision"), ends_with("pos"), ends_with("neg"), oposout:snegfeel, gloomy, eggplant, nyc, code:fl_40_do_maleselfperspectivetaking)
 
-# drop two more variables
+# drop more variables that need to be dropped 
+# drop two more variables that couldn't be dropped because of the conflict in the select command above re: "Name"
+# drop practice related time variables
 raw_data <- raw_data %>% 
-  select(-(RecipientLastName:RecipientFirstName))
+  select(-(recipientlastname:recipientfirstname))
 
-# check data
+# drop variables related to practice scenario
+practice <- c("203", "204","300" , "4.3" , "332" , "261" , "370" , "403" , "436")
+raw_data <- raw_data %>% 
+  select(!contains(practice))
 glimpse(raw_data)
 
-# drop submit info for practice scenarios
-raw_data <- raw_data %>% 
-  select(-contains("Submit") & contains("203" | "204" | "300" | "307" | "4.5" | "4.13" | "334" | "339" | "261" | "263" | "267" | "370" | "372" | "377" | "")   )
-
+# na
 
 # give id to data
-tibble::rowid_to_column(raw_data, "ID")
+# tibble::rowid_to_column(raw_data, "ID")
+```
+
+```{r rename-variables, eval = FALSE}
+# standardize case 
+raw_data <- raw_data %>% 
+rename_with(tolower)
+glimpse(raw_data)
+
+# rename 
+raw_data <- raw_data %>% 
+  rename(duration__in_seconds_  = comptime,
+         
+         
+         )
 ```
 ##### What I learned
 I first used some "drop" arguments and "select" arguments together in one select command. This created a problem whereby changing the order of the arguments resulted in different select results. I learned that using "drop" and "select" arguments at the same time is not intuitive. It'd be easier to just select the columns I want. 
