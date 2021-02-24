@@ -36,11 +36,12 @@ raw_data <- raw_data %>%
 # give id to data
 tibble::rowid_to_column(raw_data, "ID")
 ```
-##### I learned that using "drop" and "select" arguments at the same time is not inuitive. It'd be easier to just select the columns I want. 
+##### What I learned
+I first used some "drop" arguments and "select" arguments together in one select command. This created a problem whereby changing the order of the arguments resulted in different select results. I learned that using "drop" and "select" arguments at the same time is not intuitive. It'd be easier to just select the columns I want. 
 
-There has to be some order of operations of doing "selects" and "not-selects" in the same statement. If I don't understand how the order of operations applies, then I shouldn't do that. 
+I learned that I'd need to logically think through each step that moves towards my goal. There has to be some order of operations of doing "selects" and "not-selects" in the same statement. If I don't understand how the order of operations applies, then I shouldn't do that. 
 
-I need to logically think through each step that moves towards my goal. 
+If I'm dropping several columns, I get the rest left. Then, if I'm selecting A, then all I'll be left with is A. Now, what do I accomplish by dropping the initial columns I dropped? Nothing! So I shouldn't do drops and selects in that order.
 
-If I'm dropping several columns, I get the rest left. Then, if I'm selecting A, then all I have been left with is A. Now, what do I accomplish by dropping the initial columns I dropped? Nothing! So why do I do it?
+
 
