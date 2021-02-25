@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Cleaning"
 author: "Ye Dam Yi"
 date: "2/23/2021"
 output: html_document
@@ -16,7 +16,6 @@ raw_data <- read_spss("data/raw-data-20200618.sav")
 # standardize case 
 raw_data <- raw_data %>% 
 rename_with(tolower)
-glimpse(raw_data)
 ```
 
 ```{r select-columns}
@@ -31,36 +30,52 @@ raw_data <- raw_data %>%
   select(-(recipientlastname:recipientfirstname))
 
 # drop variables related to practice scenario
-practice <- c("203", "204","300" , "4.3" , "332" , "261" , "370" , "403" , "436")
+practice <- c("203", "204", "300" , "4.3" , "332" , "261" , "370" , "403" , "436")
 raw_data <- raw_data %>% 
   select(!contains(practice))
-glimpse(raw_data)
+# glimpse(raw_data)
 
-# na
-
-# give id to data
-# tibble::rowid_to_column(raw_data, "ID")
 ```
 
-```{r rename-variables, eval = FALSE}
-# standardize case 
-raw_data <- raw_data %>% 
-rename_with(tolower)
-glimpse(raw_data)
 
-# rename 
-raw_data <- raw_data %>% 
-  rename(duration__in_seconds_  = comptime,
-         
-         
-         )
-```
-##### What I learned
+##### What I learned about dropping and selecting arguments
 I first used some "drop" arguments and "select" arguments together in one select command. This created a problem whereby changing the order of the arguments resulted in different select results. I learned that using "drop" and "select" arguments at the same time is not intuitive. It'd be easier to just select the columns I want. 
 
 I learned that I'd need to logically think through each step that moves towards my goal. There has to be some order of operations of doing "selects" and "not-selects" in the same statement. If I don't understand how the order of operations applies, then I shouldn't do that. 
 
 If I'm dropping several columns, I get the rest left. Then, if I'm selecting A, then all I'll be left with is A. Now, what do I accomplish by dropping the initial columns I dropped? Nothing! So I shouldn't do drops and selects in that order.
 
+```{r restructure-time-data, eval = FALSE}
+raw_data <- raw_data %>%   
+gather(index, comptime1, q209_page_submit, q307_page_submit, q4.13_page_submit, q339_page_submit, q267_page_submit, q377_page_submit, q410_page_submit, q443_page_submit) %>% 
+  gather(index, comptime2, q212_page_submit, q313_page_submit, q4.18_page_submit, q345_page_submit, q273_page_submit, q383_page_submit, q416_page_submit, q449_page_submit ) %>% 
+  gather(index, comptime3, q218_page_submit, q319_page_submit, q4.23_page_submit, q351_page_submit, q279_page_submit, q389_page_submit, q422_page_submit, q455_page_submit) %>% 
+  gather(index, comptime4, q223_page_submit, q325_page_submit, q4.28_page_submit, q357_page_submit, q285_page_submit, q395_page_submit, q428_page_submit, q461_page_submit)
+head(raw_data)
+```
 
 
+```{r rename-variables, eval = FALSE}
+# rename 
+raw_data <- raw_data %>% 
+  rename(comptime = duration__in_seconds_,
+         foc = fl_30_do_femaleothercontrol,
+         fsc = fl_30_do_femaleselfcontrol,
+         fop = fl_30_do_femaleotherperspectivetaking,
+         fsp = fl_30_do_femaleselfperspectivetaking,
+         moc = fl_40_do_maleothercontrol,
+         mop = fl_40_do_maleotherperspectivetaking,
+         msc = fl_40_do_maleselfcontrol,
+         msp = fl_40_do_maleselfperspectivetaking)
+
+# rename time variables (This part needs to be figured out)
+q209_page_submit  q307_page_submit q4.13_page_submit q339_page_submit q267_page_submit q377_page_submit q410_page_submit q443_page_submit 
+/make pagesubmit2 from
+ q212_page_submit q313_page_submit q4.18_page_submit q345_page_submit q273_page_submit q383_page_submit q416_page_submit q449_page_submit 
+/make pagesubmit3 from 
+q218_page_submit q319_page_submit q4.23_page_submit q351_page_submit q279_page_submit q389_page_submit q422_page_submit q455_page_submit 
+/make pagesubmit4 from  
+q223_page_submit q325_page_submit q4.28_page_submit q357_page_submit q285_page_submit q395_page_submit q428_page_submit q461_page_submit 
+# give id to data
+tibble::rowid_to_column(raw_data, "ID")
+```
